@@ -155,7 +155,7 @@ if ( ! class_exists( 'Porto_Critical_Table' ) ) {
 			} elseif ( 'homepage' === $item['id'] ) {
 				$markup = '<a href="' . esc_url( get_home_url() ) . '" target="_blank" rel="noopener">' . $markup . '</a>';
 			}
-			$actions['delete'] = sprintf( '<a href="' . esc_url( $this->url ) . '&action=%s&post=%s">' . esc_html__( 'Delete', 'porto-functionality' ) . '</a>', 'delete_css', esc_attr( $item['id'] ) );
+			$actions['delete'] = sprintf( '<a href="' . esc_url( $this->url ) . '&action=%s&post=%s&_wpnonce=%s">' . esc_html__( 'Delete', 'porto-functionality' ) . '</a>', 'delete_css', esc_attr( $item['id'] ), wp_create_nonce( 'porto_critical_nonce' ) );
 
 			return $markup . $this->row_actions( $actions );
 		}

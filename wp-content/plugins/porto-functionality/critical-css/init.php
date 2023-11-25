@@ -524,7 +524,7 @@ class Porto_Critical {
 			if ( 'homepage' == $_POST['id'] ) {
 				update_option( 'homepage_critical', maybe_unserialize( wp_unslash( $_POST['pageCriticalCss'] ) ) );
 			} else {
-				update_post_meta( $_POST['id'], 'porto_critical_css', maybe_unserialize( wp_unslash( $_POST['pageCriticalCss'] ) ) );
+				update_post_meta( $_POST['id'], 'porto_critical_css', maybe_unserialize( $_POST['pageCriticalCss'] ) );
 			}
 		}
 		wp_send_json_success();
@@ -562,6 +562,10 @@ class Porto_Critical {
 	 * @since 2.3.0
 	 */
 	public function table_actions() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
 		$action = '';
 		if ( isset( $_REQUEST['action'] ) ) {
 			if ( -1 !== $_REQUEST['action'] && '-1' !== $_REQUEST['action'] ) {
@@ -573,11 +577,13 @@ class Porto_Critical {
 				$action = sanitize_text_field( wp_unslash( $_REQUEST['action2'] ) );
 			}
 		}
-
+		
 		if ( ! empty( $action ) ) {
 			if ( 'porto_bulk_delete_critical' == $action ) {
+				check_admin_referer( 'bulk-porto_page_porto-critical' );
 				$this->bulk_delete_critical();
 			} elseif ( 'delete_css' == $action ) {
+				check_admin_referer( 'porto_critical_nonce' );
 				$this->delete_css();
 			}
 			return false;
@@ -633,7 +639,7 @@ class Porto_Critical {
 
 		// Delete critical css
 		global $wpdb;
-		$page_ids = sanitize_text_field( implode( ',', $page_ids ) );
+		$page_ids = sanitize_text_field( implode( ',', array_map( 'intval', $page_ids ) ) );
 		$wpdb->query( $wpdb->prepare( 'UPDATE ' . $wpdb->postmeta . " SET meta_value = '' WHERE meta_id IN ($page_ids)" ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
 		$this->redirect_critical_wizard();
