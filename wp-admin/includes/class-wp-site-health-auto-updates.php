@@ -437,7 +437,7 @@ class WP_Site_Health_Auto_Updates {
 				'description' => sprintf(
 					/* translators: %s: Name of the constant used. */
 					__( 'WordPress security and maintenance releases are blocked by %s.' ),
-					"<code>define( 'WP_AUTO_UPDATE_CORE', false );</code>"
+					"<code>define( 'WP_AUTO_UPDATE_CORE', true );</code>"
 				),
 				'severity'    => 'fail',
 			);
